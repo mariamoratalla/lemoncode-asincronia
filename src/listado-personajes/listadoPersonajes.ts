@@ -58,8 +58,10 @@ const crearContenedorPersonaje = (personaje: Personaje): HTMLDivElement => {
   );
   divCard.appendChild(habilidades);
 
-  const amigo = crearElementoParrafo("Amigo", personaje.amigo);
-  divCard.appendChild(amigo);
+  if (personaje.amigo) {
+    const amigo = crearElementoParrafo("Amigo", personaje.amigo);
+    divCard.appendChild(amigo);
+  }
 
   return divCard;
 };
