@@ -5,7 +5,9 @@ const listadoPersonajes = document.querySelector(
   ".listado-personajes"
 ) as HTMLDivElement;
 const input = document.querySelector("#filtrar") as HTMLInputElement;
-const botonFiltrar = document.querySelector("#boton-filtrar");
+const botonFiltrar = document.querySelector(
+  "#boton-filtrar"
+) as HTMLButtonElement;
 
 const crearElementoImagen = (
   imagen: string,
