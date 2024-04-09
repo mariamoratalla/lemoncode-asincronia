@@ -1,7 +1,11 @@
 import { obtenerPersonajes } from "./listadoPersonajes.api";
 import { Personaje } from "./listadoPersonajes.model";
 
-const listadoPersonajes = document.querySelector(".listado-personajes");
+const listadoPersonajes = document.querySelector(
+  ".listado-personajes"
+) as HTMLDivElement;
+const input = document.querySelector("#filtrar") as HTMLInputElement;
+const botonFiltrar = document.querySelector("#boton-filtrar");
 
 const crearElementoImagen = (
   imagen: string,
@@ -59,15 +63,29 @@ const crearContenedorPersonaje = (personaje: Personaje): HTMLDivElement => {
 };
 
 const pintarPersonajes = async () => {
-  const personajes = await obtenerPersonajes();
-
-  if (listadoPersonajes && listadoPersonajes instanceof HTMLDivElement) {
+  try {
+    const personajes = await obtenerPersonajes();
+    listadoPersonajes.innerHTML = "";
     personajes.forEach((personaje) => {
       const card = crearContenedorPersonaje(personaje);
       listadoPersonajes.appendChild(card);
     });
-  } else {
-    throw new Error("No se ha encontrado el contenedor");
+  } catch (error) {
+    throw new Error("Error al pintar personajes");
+  }
+};
+
+const filtrarPersonajes = async () => {
+  try {
+    const valorInput = input.value.toLowerCase();
+    const personajes = await obtenerPersonajes();
+    const personajesFiltrados = personajes.filter((personaje) =>
+      personaje.nombre.toLowerCase().includes(valorInput)
+    );
+    listadoPersonajes.innerHTML = "";
+    pintarPersonajesFiltrados(personajesFiltrados);
+  } catch (error) {
+    throw new Error("Error al filtrar los personajes");
   }
 };
 
@@ -82,34 +100,11 @@ const pintarPersonajesFiltrados = (personajes: Personaje[]) => {
   }
 };
 
-const filtrarPersonajes = async () => {
-  const input = document.querySelector("#filtrar") as HTMLInputElement;
-  const personajes = await obtenerPersonajes();
-  const listadoPersonajes = document.querySelector(
-    ".listado-personajes"
-  ) as HTMLDivElement;
-
-  if (listadoPersonajes && listadoPersonajes instanceof HTMLDivElement) {
-    const valorInput = input.value;
-    listadoPersonajes.innerHTML = "";
-
-    const personajesFiltrados = personajes.filter((personaje) =>
-      personaje.nombre.toLowerCase().includes(valorInput)
-    );
-
-    pintarPersonajesFiltrados(personajesFiltrados);
-  } else {
-    throw new Error("No se ha encontrado el contenedor");
-  }
-};
-
-const botonFiltrar = document.querySelector("#boton-filtrar");
 if (botonFiltrar && botonFiltrar instanceof HTMLButtonElement) {
   botonFiltrar.addEventListener("click", filtrarPersonajes);
 }
 
-const campoBusqueda = document.querySelector("#filtrar") as HTMLInputElement;
-campoBusqueda.addEventListener("keypress", async (event) => {
+input.addEventListener("keypress", async (event) => {
   if (event.key === "Enter") {
     await filtrarPersonajes();
   }
